@@ -1,0 +1,26 @@
+{% extends 'shop/base.html' %}
+
+{% block title %}
+{% endblock %}
+
+
+{% block content %}
+    <table class="table">
+        <tr>
+            <td rowspan="4">
+                <img src="/static/{{ goods_data.picture }}" style="width: 250px;height: 200px;">
+            </td>
+            <th>商品名称</th>
+            <td>{{ goods_data.name }}</td>
+            <th>商品价格</th>
+            <td>{{ goods_data.price }}￥</td>
+        </tr>
+        <tr>
+            <th>商品数量</th>
+            <td>{{ goods_data.number }}份</td>
+            <th>出厂日期</th>
+            <td>{{ goods_data.production }}</td>
+        </tr>
+    </table>
+        <a href="/Shop/add_update_goods/{{ goods_data.id }}/" class="btn btn-primary btn-user btn-block">修改商品信息</a>
+{% endblock %}

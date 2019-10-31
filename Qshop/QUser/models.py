@@ -12,6 +12,8 @@ class Quser(models.Model):
     address = models.TextField(blank=True, null=True)
     picture = models.ImageField(upload_to='image', default='image/头像.jpg')
 
+    identity = models.IntegerField(blank=True, null=False, default=0)
+
 
 
 

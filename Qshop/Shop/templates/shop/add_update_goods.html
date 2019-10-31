@@ -1,0 +1,44 @@
+{% extends 'shop/base.html' %}
+{% block title %}
+{% endblock %}
+{% block content %}
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <p>
+            <input class='form-control form-control-user' type="text" name="name" value="{{ goods_update.name }}">
+        </p>
+        <p>
+            <input class='form-control form-control-user' type="number" name="price" value="{{ goods_update.price }}">
+        </p>
+        <p>
+             <input class="form-control form-control-user" type="number" name="number" value="{{ goods_update.number }}">
+        </p>
+        <p>
+            <input class="form-control form-control-user" type="datetime-local" name="production" value="{{ goods_update.production }}">
+        </p>
+        <p>
+            <input class="form-control form-control-user" type="text" name="safe_date" value="{{ goods_update.safe_date }}">
+        </p>
+        <p>
+            <textarea id="description" class="form-control form-control-user" name="description">
+                {{ goods_update.description }}
+            </textarea>
+        </p>
+        <p>
+            <input class="form-control form-control-user" type="file" name="picture" placeholder="商品图片">
+        </p>
+        <p>
+            {% if id is None %}
+                <input class="btn btn-primary btn-block" type="submit" value="添加商品">
+            {% else %}
+                <input class="btn btn-primary btn-block" type="submit" value="修改商品">
+            {% endif %}
+        </p>
+    </form>
+{% endblock %}
+{% block script %}
+<script src="/static/ckeditor/ckeditor/ckeditor.js"></script>
+<script>
+    CKEDITOR.replace("description",{uiColor:"#ff1c24"})
+</script>
+{% endblock %}

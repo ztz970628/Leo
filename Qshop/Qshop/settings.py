@@ -39,7 +39,10 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'QUser',
     'Shop',
-    'djcelery'
+    'djcelery',
+    'ckeditor',
+    'ckeditor_uploader',
+    'Buyer',
 ]
 
 MIDDLEWARE = [
@@ -66,6 +69,9 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
             ],
+            'libraries':{
+                'my_customer_tags': 'Buyer.templatetags.ourTag'
+            }
         },
     },
 ]
@@ -159,3 +165,10 @@ CELERYBEAT_SCHEDULE = {
         "schedule": timedelta(seconds=1)
     }
 }
+
+# ckeditor
+CKEDITOR_UPLOAD_PATH = 'upload'
+CKEDITOR_IMAGE_BACKEND = 'pillow'
+
+
+# 分页的配置

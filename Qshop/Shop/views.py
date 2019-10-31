@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from django.http import HttpResponseRedirect
 from QUser.views import *
+from Shop.models import *
 import smtplib
 from email.mime.text import MIMEText
 
@@ -31,7 +32,11 @@ def login_valid(func):
         cookie_user = request.COOKIES.get('email')
         session_user = request.session.get('email')
         if cookie_user and session_user and cookie_user == session_user:
-            return func(request, *args, **kwargs)
+            user = Quser.objects.get(email=cookie_user)
+            identity = user.identity
+            if identity >= 1:
+                return func(request, *args, **kwargs)
+            return HttpResponseRedirect('/')
         else:
             return HttpResponseRedirect('/Shop/login/')
     return inner
@@ -217,3 +222,116 @@ def set_profile(request):
         user.save()
         return HttpResponseRedirect('/Shop/profile/')
     return render(request, 'shop/set_profile.html', {'user': user})
+
+
+def list_goods(request):
+    goods_list = Goods.objects.all()
+    return render(request, 'shop/list_goods.html', locals())
+
+
+def set_goods(request, id):
+    set_type = request.GET.get('set_type')
+    goods = Goods.objects.get(id=int(id))
+    if set_type == 'up':
+        goods.statue = 1
+    elif set_type == 'down':
+        goods.statue = 0
+    goods.save()
+    return HttpResponseRedirect('/Shop/list_goods/')
+
+
+def goods(request, id):
+    goods_data = Goods.objects.get(id=id)
+    return render(request, 'shop/goods.html', locals())
+
+
+@login_valid
+def add_update_goods(request, id=None):
+    if id:
+        goods_update = Goods.objects.get(id=id)
+    else:
+        goods_update = Goods()
+    if request.method == 'POST':
+        name = request.POST.get('name')
+        price = request.POST.get('price')
+        number = request.POST.get('number')
+        production = request.POST.get('production').replace('年', '-').replace('月', '-').replace('日', '')
+        safe_date = request.POST.get('safe_date')
+        picture = request.FILES.get('picture')
+        description = request.POST.get('description')
+
+        goods_update.name = name
+        goods_update.price = price
+        goods_update.number = number
+        goods_update.production = production
+        goods_update.safe_date = safe_date
+        goods_update.picture = picture
+        goods_update.description = description
+        goods_update.save()
+        return HttpResponseRedirect('/Shop/goods/%s' % goods_update.id + '/')
+    return render(request, 'shop/add_update_goods.html', locals())
+
+
+from django.views import View
+from django.http import JsonResponse
+from django.core.paginator import Paginator
+# from Qshop.settings import PAZE_SIZE
+
+
+class GoodsView(View):
+    def get(self, request):
+        result = {
+            'version': 'v1',
+            'code': '200',
+            'data': [],
+            'page-range': [],
+            'referer': ''
+        }
+        id = request.GET.get('id')
+        if id:
+            goods_data = Goods.objects.get(id=int(id))
+            result['data'].append(
+                {'id': goods_data.id,
+                    'name': goods_data.name,
+                    'price': goods_data.price,
+                    'number': goods_data.number,
+                    'production': goods_data.production,
+                    'safe_data': goods_data.safe_date,
+                    'picture': goods_data.picture.url,
+                    'description': goods_data.description,
+                    'statue': goods_data.statue
+                }
+            )
+        else:
+            # 尝试获取页码,如果页码不存在,默认是第一页
+            page_number = request.GET.get('page', 1)
+            # 尝试获取数据
+            keywords = request.GET.get('keywords')
+            # 获取所有数据
+            all_goods = Goods.objects.all()
+            if keywords:  # 如果有值,查询对应值
+                all_goods = Goods.objects.filter(name__contains=keywords)
+                result['referer'] = '&keywords=%s' % keywords
+            # 进行分页
+            paginator = Paginator(all_goods, 7)
+            # 获取单页数据
+            page_data = paginator.page(page_number)
+            # 获取页码
+            result['page_range'] = list(paginator.page_range)
+            goods_data = [{"id": g.id,
+                           "name": g.name,
+                           "price": g.price,
+                           "number": g.number,
+                           "production": g.production,
+                           "safe_date": g.safe_date,
+                           "picture": g.picture.url,
+                           "description": g.description,
+                           "statue": g.statue} for g in page_data
+                ]
+            result["data"] = goods_data
+        return JsonResponse(result)
+
+
+def vue_list_goods(request):
+    return render(request, 'shop/vue_list_goods.html', locals())
+

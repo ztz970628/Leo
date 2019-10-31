@@ -21,7 +21,8 @@
 
   <!-- Custom styles for this template-->
   <link href="/static/shop/css/sb-admin-2.min.css" rel="stylesheet">
-
+    {% block style %}
+    {% endblock %}
 </head>
 
 <body id="page-top">
@@ -45,9 +46,9 @@
 
       <!-- Nav Item - Dashboard -->
       <li class="nav-item active">
-        <a class="nav-link" href="index.html">
+        <a class="nav-link" href="/Shop/vue_list_goods/">
           <i class="fas fa-fw fa-tachometer-alt"></i>
-          <span>Dashboard</span></a>
+          <span>商品管理</span></a>
       </li>
 
       <!-- Divider -->
@@ -307,7 +308,7 @@
               </a>
               <!-- Dropdown - User Information -->
               <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="userDropdown">
-                <a class="dropdown-item" href="/Shop/prifile/">
+                <a class="dropdown-item" href="/Shop/profile/">
                   <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
                   个人中心
                 </a>
@@ -331,6 +332,8 @@
 
         </nav>
         <!-- End of Topbar -->
+          {% block label %}
+          {% endblock %}
           {% block content %}
           {% endblock %}
         <!-- Begin Page Content -->
@@ -395,7 +398,8 @@
   <!-- Page level custom scripts -->
   <script src="/static/shop/js/demo/chart-area-demo.js"></script>
   <script src="/static/shop/js/demo/chart-pie-demo.js"></script>
-
+{% block script %}
+{% endblock %}
 </body>
 
 </html>
