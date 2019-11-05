@@ -20,7 +20,7 @@ def index(request):
     # 查询每个类型的对应的4个商品
     # for t in type_list:
     #     goods_list = t.goods_set.all()[:4]
-    # result = [{t.name: t.goods_set.all(), 'pic': t.picture} for t in type_list]
+    # result = [{t.name: t.goods_set    .all(), 'pic': t.picture} for t in type_list]
     return render(request, 'buyer/index.html', locals())
 
 
@@ -34,7 +34,20 @@ def goods_list(request, id):
 
 def good_data(request, id):
     one_good = Goods.objects.filter(id=id)[0]
+    goods_data = Goods.objects.get(id=int(id))
     type_list = GoodsType.objects.filter(id=one_good.goods_type_id)[0]
+    email = request.COOKIES.get('email')
+    if email:
+        now_data = History.objects.filter(user_email=email).order_by('id')
+        if len(now_data) >= 5:
+            now_data[0].delete()
+        history = History()
+        history.user_email = email
+        history.goods_id = id
+        history.goods_name = goods_data.name
+        history.goods_price = goods_data.price
+        history.goods_picture = goods_data.picture
+        history.save()
     return render(request, 'buyer/good_data.html', locals())
 
 
@@ -92,7 +105,7 @@ def cart(request):
             o_info.goods_price = goods.price
             o_info.goods_total = number * goods.price
             o_info.goods_picture = goods.picture.url
-            o_info.order_store = goods.goods_store_id
+            o_info.order_store = goods.goods_store
             o_info.save()
             order_total += o_info.goods_total
         p_order.order_total = order_total  # 保存当前订单的总价
@@ -174,5 +187,38 @@ def add_car(request):
 
 
 def place_order(request):
-    return render(request, 'buyer/place_order.html')
+    addr = GoodsAddress.objects.all()
+    return render(request, 'buyer/place_order.html', locals())
+
+
+def user_center_info(request):
+    user_email = request.COOKIES.get('email')
+    user = Quser.objects.get(email=user_email)
+    goods_list = History.objects.filter(user_email=user_email)
+    return render(request, 'buyer/user_center_info.html', locals())
+
+
+def user_center_site(request):
+    email = request.COOKIES.get('email')
+    user = Quser.objects.get(email=email)
+    if user.goodsaddress_set.filter(state=0):
+        addr = user.goodsaddress_set.filter(state=0)[0]
+    else:
+        addr = {}
+    if request.method == 'POST':
+        recv = request.POST.get('recv')
+        address = request.POST.get('address')
+        post_number = request.POST.get('post_number')
+        phone = request.POST.get('phone')
+
+        addr = GoodsAddress()
+        addr.recver = recv  # 收货人地址
+        addr.address = address
+        addr.post_number = post_number
+        addr.phone = phone
+        addr.state = 0
+        addr.user = user
+        addr.save()
+    return render(request, 'buyer/user_center_site.html', locals())
+
 # Create your views here.

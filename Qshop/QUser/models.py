@@ -15,8 +15,15 @@ class Quser(models.Model):
     identity = models.IntegerField(blank=True, null=False, default=0)
 
 
+class GoodsAddress(models.Model):
+    """
+    收货地址
+    """
+    recver = models.CharField(max_length=64)
+    address = models.TextField()
+    post_number = models.CharField(max_length=32)
+    phone = models.CharField(max_length=32)
+    state = models.IntegerField()  # 0代表常规地址  1 默认地址
 
-
-
-
+    user = models.ForeignKey(to=Quser, on_delete=models.CASCADE, default=4)
 # Create your models here.

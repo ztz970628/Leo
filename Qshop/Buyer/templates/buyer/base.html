@@ -45,7 +45,7 @@
 				</div>
 				<div class="login_btn fl">
                     {% if request.COOKIES.email %}
-                        <a href="">{{ request.COOKIES.email }}</a>
+                        <a href="/Buyer/user_center_info/">{{ request.COOKIES.email }}</a>
 					    <span>|</span>
                         <a href="/Buyer/logout/">退出</a>
                     {% else %}
@@ -57,7 +57,7 @@
 				</div>
 				<div class="user_link fl">
 					<span>|</span>
-					<a href="user_center_info.html">用户中心</a>
+					<a href="/Buyer/user_center_info/">用户中心</a>
 					<span>|</span>
 					<a href="/Buyer/cart/">我的购物车</a>
 					<span>|</span>
@@ -106,6 +106,7 @@
         {% endblock %}
 
     {% block body %}
+
     {% endblock %}
 
 

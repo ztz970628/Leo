@@ -49,4 +49,12 @@ class Order_info(models.Model):
     order_store = models.ForeignKey(to=Quser, on_delete=models.CASCADE)
 
 
+class History(models.Model):
+    user_email = models.CharField(max_length=32)
+    goods_id = models.IntegerField()
+    goods_name = models.TextField()
+    goods_price = models.FloatField()
+    goods_picture = models.TextField()
+
+    # objects = HistoryManager()
 # Create your models here.

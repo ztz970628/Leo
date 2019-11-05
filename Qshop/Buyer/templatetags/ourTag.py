@@ -25,3 +25,12 @@ def get_filter(obj):
     """
     result = obj.filter(statue=1)[:4]
     return result
+
+
+@register.filter('set_phone')
+def set_phone(obj):
+    """
+    拼接手机号使用,隐私
+    """
+    result = obj[:3] + '***' + obj[7:]
+    return result
