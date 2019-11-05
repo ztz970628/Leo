@@ -230,14 +230,12 @@ def list_goods(request):
 
 
 def set_goods(request, id):
-    set_type = request.GET.get('set_type')
-    goods = Goods.objects.get(id=int(id))
-    if set_type == 'up':
-        goods.statue = 1
-    elif set_type == 'down':
-        goods.statue = 0
-    goods.save()
-    return HttpResponseRedirect('/Shop/list_goods/')
+    goods = Goods.objects.filter(id=int(id))
+    if goods[0].statue == 0:
+        goods.update(statue=1)
+    else:
+        goods.update(statue=0)
+    return HttpResponseRedirect('/Shop/vue_list_goods/')
 
 
 def goods(request, id):

@@ -4,6 +4,8 @@
     商品详情
 {% endblock %}
 
+
+
 {% block body %}
     <div class="breadcrumb">
 		<a href="#">全部分类</a>
@@ -20,21 +22,21 @@
 			<h3>{{ one_good.name }}</h3>
 			<p>{{ one_good.description|safe}}</p>
 			<div class="prize_bar">
-				<span class="show_pirze">¥<em>{{ one_good.price }}</em></span>
+				<span class="show_pirze">¥<em id="price">{{ one_good.price }}</em></span>
 				<span class="show_unit">单  位：500g</span>
 			</div>
 			<div class="goods_num clearfix">
 				<div class="num_name fl">数 量：</div>
 				<div class="num_add fl">
-					<input type="text" class="num_show fl" value="1">
-					<a href="javascript:;" class="add fr">+</a>
-					<a href="javascript:;" class="minus fr">-</a>	
+					<input id="number" type="text" class="num_show fl" value="1">
+					<a href="javascript:;" class="add fr" onclick="change_number('u')">+</a>
+					<a href="javascript:;" class="minus fr" onclick="change_number('d')">-</a>
 				</div> 
 			</div>
-			<div class="total">总价：<em>{{ one_good.price }}元</em></div>
+			<div class="total">总价：<em id="total">{{ one_good.price }}元</em></div>
 			<div class="operate_btn">
-				<a href="javascript:;" class="buy_btn">立即购买</a>
-				<a href="javascript:;" class="add_cart" id="add_cart">加入购物车</a>				
+				<a href="/Buyer/place_order/" class="buy_btn">立即购买</a>
+                <a href="javascript:;" class="add_cart"  id="add_cart"  onclick="add_car(this)" good_num = {{ one_good.id }} >加入购物车</a>
 			</div>
 		</div>
 	</div>
@@ -73,4 +75,58 @@
 
 		</div>
 	</div>
+    <script src="/static/buyer/js/jquery-1.12.4.min.js"></script>
+    <script>
+        function change_number(t) {
+            var obj = $('#number');
+            var value = parseInt(obj.val());
+            var price = parseFloat($('#price').text());
+
+            if(t=='u'){
+                var value = value + 1;
+            }else if(t=='d'){
+                var value = value - 1;
+            }
+            if(value < 1){
+                value = 1
+            }
+            var total = price * value;
+
+            $('#total').text(total+'元');
+            obj.val(value);
+        }
+        $('#number').blur(
+            function () {
+                var obj = $("#number"); //根据id获取input框
+                var value = parseInt(obj.val()); //获取input框的值，并且转为为数字
+                var price = parseFloat($("#price").text());
+             if(value < 1){
+                value = 1;
+                obj.val(value);
+            }
+              var total = price*value;
+            $("#total").text(total+"元");
+        }
+        );
+        function add_car(obj) {
+            var goods_id = $(obj).attr('good_num');
+            var good_number = $('#number').val();
+            var post_data = {"goods_id":goods_id,'number':good_number,"csrfmiddlewaretoken": "{{ csrf_token }}"};
+            console.log(post_data);
+            $.ajax(
+                {
+                    url:'/Buyer/add_car/',
+                    type: 'post',
+                    data: post_data,
+                    success:function (data) {
+                        alert(data['data'])
+                    },
+                    error:function (error) {
+                        console.log(error)
+                    }
+                }
+            )
+        }
+    </script>
+
 {% endblock %}

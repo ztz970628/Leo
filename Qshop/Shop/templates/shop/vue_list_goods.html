@@ -40,7 +40,8 @@
                 <td>{{ g.production }}</td>
                 <td>{{ g.safe_date }}</td>
                 <td>
-                    <a class="btn btn-primary" style="color: white">下架</a>
+                     <a v-bind:href="'/Shop/set_goods/'+g.id" class="btn btn-danger" v-if="g.statue==1">下架</a>
+                     <a v-bind:href="'/Shop/set_goods/'+g.id" class="btn btn-primary" style="color:white" v-if="g.statue==0">上架</a>
                 </td>
             </tr>
         </table>
@@ -72,6 +73,7 @@
                 created: function () {
                     this.$http.get("/Shop/Goods/").then(
                         function (data) {
+                            console.log(data)
                             this.goods_list = data["data"]["data"];
                             this.page_range = data["data"]["page_range"];
                             console.log(data["data"]["page_range"])

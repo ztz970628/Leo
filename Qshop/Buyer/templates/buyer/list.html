@@ -4,6 +4,10 @@
     商品列表
 {% endblock %}
 
+{% block style %}
+    <script src="/static/buyer/js/jquery-1.12.4.min.js"></script>
+{% endblock %}
+
 {% block body %}
     <div class="breadcrumb">
 		<a href="#">全部分类</a>
@@ -46,7 +50,7 @@
 					<div class="operate">
 						<span class="prize">￥{{ foo.price }}</span>
 						<span class="unit">16.80/500g</span>
-						<a href="#" class="add_goods" title="加入购物车"></a>
+						<a id="{{ foo.id }}" class="add_goods" title="加入购物车" onclick="add_car(this.id)" ></a>
 					</div>
 				</li>
 
@@ -65,4 +69,23 @@
 			</div>
 		</div>
 	</div>
+    <script>
+        function add_car(obj) {
+            var post_data = {'goods_id':obj, "csrfmiddlewaretoken": "{{ csrf_token }}"};
+            console.log(post_data);
+            $.ajax(
+                {
+                    url:'/Buyer/add_car/',
+                    type: 'post',
+                    data: {'goods_id':obj, "csrfmiddlewaretoken": "{{ csrf_token }}"},
+                    success:function (data) {
+                        alert(data['data'])
+                    },
+                    error:function (error) {
+                        console.log(error)
+                    }
+                }
+            )
+        }
+    </script>
 {% endblock %}

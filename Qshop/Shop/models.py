@@ -20,5 +20,5 @@ class Goods(models.Model):
     statue = models.IntegerField(default=1)  # 0下架  1下架
 
     goods_type = models.ForeignKey(to=GoodsType, on_delete=models.CASCADE)
-    goods_store = models.ForeignKey(to=Quser, on_delete=models.CASCADE, default=1)
+    goods_store = models.ForeignKey(to=Quser, on_delete=models.CASCADE)
 # Create your models here.
